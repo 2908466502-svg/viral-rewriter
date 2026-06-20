@@ -114,6 +114,43 @@ export default function Home() {
           ))}
         </div>
 
+        {/* ═══════ 使用说明 ═══════ */}
+        <div className="mb-8 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            <div className="flex gap-3">
+              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-amber-600 font-bold text-sm">1</span>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">找到爆款</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">在小红书/抖音/公众号上找到一篇任意行业的爆款内容，复制全文粘贴到左侧输入框</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-violet-600 font-bold text-sm">2</span>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">选择目标</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">设置你要改写到的目标行业和产品，AI 会自动识别爆款骨架并适配到你的行业</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-emerald-600 font-bold text-sm">3</span>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">挑选使用</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">生成 3-10 个改写版本，每个版本保留爆款的情绪节奏，替换为你的行业内容，挑最合适的用</p>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-2 text-[11px] text-gray-400">
+            <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-medium">💡 核心价值</span>
+            不凭空生成选题，而是把你发现的好内容"翻译"到你的行业——你负责发现爆款骨架，AI 负责降重改写
+          </div>
+        </div>
+
         {/* ═══════ Main Panel ═══════ */}
         <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden mb-10">
           <div className="grid grid-cols-1 lg:grid-cols-5 divide-y lg:divide-y-0 lg:divide-x divide-gray-100">
