@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { rewrite, type RewriteResult } from "@/lib/rewriter"
-import { Sparkles, Loader2, Copy, Check, Download, ArrowRight, RotateCcw, Shuffle } from "lucide-react"
+import { Sparkles, Loader2, Copy, Check, Download, Shuffle, RotateCcw, TrendingUp, Zap, ArrowRight, FileText } from "lucide-react"
 
 const INDUSTRIES = ["美妆护肤", "3C数码", "服饰穿搭", "母婴亲子", "美食探店", "家居好物", "健身运动", "教育培训", "职场成长", "情感关系", "旅行攻略", "宠物", "汽车", "金融理财"]
 
@@ -18,6 +18,23 @@ const DEMO_SOURCE = `油皮的姐妹听我说！这款散粉真的绝了！！
 
 学生党闭眼冲！！链接放评论区了👇`
 
+/* ── 渐变背景色板 ── */
+const GRADIENTS = [
+  "from-rose-500 to-pink-600",
+  "from-violet-500 to-purple-600",
+  "from-amber-500 to-orange-600",
+  "from-emerald-500 to-teal-600",
+  "from-sky-500 to-blue-600",
+]
+
+const CARD_GRADIENTS = [
+  "bg-gradient-to-br from-rose-50 to-pink-50 border-rose-200",
+  "bg-gradient-to-br from-violet-50 to-purple-50 border-violet-200",
+  "bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200",
+  "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200",
+  "bg-gradient-to-br from-sky-50 to-blue-50 border-sky-200",
+]
+
 export default function Home() {
   const [sourceContent, setSourceContent] = useState(DEMO_SOURCE)
   const [sourceIndustry, setSourceIndustry] = useState("美妆护肤")
@@ -32,7 +49,6 @@ export default function Home() {
   const handleRewrite = async () => {
     if (!sourceContent.trim()) { setError("请先粘贴要改写的内容"); return }
     setLoading(true); setError("")
-
     try {
       const data = await rewrite({ sourceContent, sourceIndustry, targetIndustry, targetProduct: targetProduct || undefined, count })
       setResults(data)
@@ -48,149 +64,223 @@ export default function Home() {
   }
 
   const handleExportMd = () => {
-    let md = `# 爆款改写结果\n\n> 来源：${sourceIndustry} → 目标：${targetIndustry}${targetProduct ? `（${targetProduct}）` : ""}\n\n---\n\n`
+    let md = `# 爆款改写结果\n\n> 来源：${sourceIndustry} → 目标：${targetIndustry}${targetProduct ? "（" + targetProduct + "）" : ""}\n\n---\n\n`
     results.forEach((r) => { md += `## 版本 ${r.version}\n\n${r.content}\n\n> 保留：${r.preserved.join("、")}\n> 改写：${r.adapted.join("、")}\n\n---\n\n` })
-    const blob = new Blob([md], { type: "text/markdown" })
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "爆款改写结果.md"; a.click()
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([md], { type: "text/markdown" })); a.download = "爆款改写结果.md"; a.click()
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-200">
-      {/* Header */}
-      <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-              <Shuffle className="w-4 h-4 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50/30">
+      {/* ═══════ Header ═══════ */}
+      <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 flex items-center justify-center shadow-lg shadow-gray-900/20">
+              <Shuffle className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-sm text-zinc-100">爆款改写工坊</h1>
-              <p className="text-[10px] text-zinc-500">保留骨架 · 替换血肉 · 跨行业降重</p>
+              <h1 className="font-extrabold text-lg text-gray-900 tracking-tight">爆款改写工坊</h1>
+              <p className="text-xs text-gray-500">保留骨架 · 替换血肉 · 跨行业降重</p>
             </div>
           </div>
-          {results.length > 0 && (
-            <button onClick={handleExportMd} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 border border-zinc-700 text-xs text-zinc-400 hover:text-zinc-200 transition-colors">
-              <Download className="w-3.5 h-3.5" /> 导出 Markdown
-            </button>
-          )}
+          <div className="flex items-center gap-3">
+            {results.length > 0 && (
+              <button onClick={handleExportMd} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-all shadow-lg shadow-gray-900/10">
+                <Download className="w-4 h-4" /> 导出 MD
+              </button>
+            )}
+            <a href="https://github.com/2908466502-svg/viral-rewriter" target="_blank" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">GitHub ↗</a>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-6">
-        {/* Input Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Left: Source */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">原始爆款</span>
-              <select value={sourceIndustry} onChange={(e) => setSourceIndustry(e.target.value)}
-                className="bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1 text-xs text-zinc-300 focus:outline-none focus:border-amber-500/30">
-                {INDUSTRIES.map((s) => (<option key={s}>{s}</option>))}
-              </select>
-            </div>
-            <textarea value={sourceContent} onChange={(e) => setSourceContent(e.target.value)}
-              placeholder="粘贴你找到的爆款内容..."
-              rows={14}
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-4 text-sm text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500/30 transition-colors resize-none font-mono leading-relaxed" />
-          </div>
-
-          {/* Right: Target Config */}
-          <div className="flex flex-col gap-4">
-            <div>
-              <label className="text-[10px] text-zinc-500 mb-1.5 block">改写目标行业</label>
-              <select value={targetIndustry} onChange={(e) => setTargetIndustry(e.target.value)}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-violet-500/30">
-                {INDUSTRIES.map((s) => (<option key={s}>{s}</option>))}
-              </select>
-            </div>
-            <div>
-              <label className="text-[10px] text-zinc-500 mb-1.5 block">目标产品（可选）</label>
-              <input value={targetProduct} onChange={(e) => setTargetProduct(e.target.value)}
-                placeholder="如：倍思充电宝"
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-violet-500/30" />
-            </div>
-            <div>
-              <label className="text-[10px] text-zinc-500 mb-1.5 block">生成数量：{count} 个版本</label>
-              <input type="range" min={3} max={10} value={count} onChange={(e) => setCount(Number(e.target.value))}
-                className="w-full accent-violet-500" />
-              <div className="flex justify-between text-[10px] text-zinc-600 mt-1"><span>3</span><span>10</span></div>
-            </div>
-
-            <button onClick={handleRewrite} disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 disabled:from-zinc-700 disabled:to-zinc-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-200 disabled:cursor-not-allowed shadow-lg shadow-violet-500/20">
-              {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> 改写中...</> :
-                <><Shuffle className="w-4 h-4" /> {sourceIndustry} → {targetIndustry} 跨行业改写</>}
-            </button>
-
-            {error && <p className="text-sm text-red-400 bg-red-500/5 border border-red-500/20 rounded-lg p-3">{error}</p>}
-
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
-                <ArrowRight className="w-10 h-10 text-zinc-600 mx-auto mb-2" />
-                <p className="text-xs text-zinc-600">粘贴爆款原文 → AI 分析骨架 → 生成 {count} 个行业改写版本</p>
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* ═══════ Step Indicator ═══════ */}
+        <div className="flex items-center justify-center gap-2 mb-10">
+          {[
+            { icon: FileText, label: "粘贴爆款", active: true },
+            { icon: Zap, label: "AI 分析骨架", active: loading },
+            { icon: TrendingUp, label: "生成改写", active: results.length > 0 },
+          ].map((step, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                step.active ? "bg-gray-900 text-white shadow-lg shadow-gray-900/20" : "bg-white text-gray-400 border border-gray-200"
+              }`}>
+                <step.icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{step.label}</span>
               </div>
+              {i < 2 && <ArrowRight className="w-4 h-4 text-gray-300 shrink-0" />}
+            </div>
+          ))}
+        </div>
+
+        {/* ═══════ Main Panel ═══════ */}
+        <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden mb-10">
+          <div className="grid grid-cols-1 lg:grid-cols-5 divide-y lg:divide-y-0 lg:divide-x divide-gray-100">
+            {/* Left: Source Input — 3 cols */}
+            <div className="lg:col-span-3 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-sm text-gray-900">原始爆款内容</h2>
+                    <p className="text-[11px] text-gray-500">粘贴你找到的任意行业爆款</p>
+                  </div>
+                </div>
+                <select value={sourceIndustry} onChange={(e) => setSourceIndustry(e.target.value)}
+                  className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-200 transition-all cursor-pointer hover:border-gray-300">
+                  {INDUSTRIES.map((s) => (<option key={s}>{s}</option>))}
+                </select>
+              </div>
+              <textarea value={sourceContent} onChange={(e) => setSourceContent(e.target.value)}
+                rows={15}
+                placeholder="粘贴爆款内容..."
+                className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-5 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-300 transition-all resize-none leading-relaxed" />
+            </div>
+
+            {/* Right: Config + Action — 2 cols */}
+            <div className="lg:col-span-2 p-6 flex flex-col gap-5 bg-gray-50/50">
+              <h2 className="font-bold text-sm text-gray-900 flex items-center gap-2">
+                <Zap className="w-4 h-4 text-violet-500" /> 改写配置
+              </h2>
+
+              <div className="space-y-1">
+                <label className="text-[11px] font-medium text-gray-500 uppercase tracking-wider">目标行业</label>
+                <select value={targetIndustry} onChange={(e) => setTargetIndustry(e.target.value)}
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-300 transition-all cursor-pointer hover:border-gray-300">
+                  {INDUSTRIES.map((s) => (<option key={s}>{s}</option>))}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[11px] font-medium text-gray-500 uppercase tracking-wider">目标产品（可选）</label>
+                <input value={targetProduct} onChange={(e) => setTargetProduct(e.target.value)}
+                  placeholder="如：倍思充电宝"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-300 transition-all" />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <label className="text-[11px] font-medium text-gray-500 uppercase tracking-wider">生成数量</label>
+                  <span className="text-sm font-bold text-violet-600">{count} 个版本</span>
+                </div>
+                <input type="range" min={3} max={10} value={count} onChange={(e) => setCount(Number(e.target.value))}
+                  className="w-full h-2 rounded-full bg-gray-200 appearance-none cursor-pointer accent-violet-600 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md" />
+                <div className="flex justify-between text-[10px] text-gray-400"><span>3</span><span>5</span><span>7</span><span>10</span></div>
+              </div>
+
+              <button onClick={handleRewrite} disabled={loading}
+                className="w-full flex items-center justify-center gap-2.5 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 text-white font-semibold py-3.5 px-6 rounded-2xl transition-all duration-200 disabled:cursor-not-allowed shadow-xl shadow-gray-900/10 hover:shadow-2xl hover:shadow-gray-900/20 hover:-translate-y-0.5 active:translate-y-0">
+                {loading ? (
+                  <><Loader2 className="w-5 h-5 animate-spin" /> <span>正在分析改写...</span></>
+                ) : (
+                  <><Sparkles className="w-5 h-5" /> <span>{sourceIndustry} → {targetIndustry} &nbsp;跨行业改写 {count} 版</span></>
+                )}
+              </button>
+
+              {error && (
+                <div className="p-4 rounded-2xl bg-red-50 border border-red-200">
+                  <p className="text-sm text-red-600 font-medium">{error}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Loading State */}
+        {/* ═══════ Results ═══════ */}
         {loading && (
-          <div className="text-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-violet-400 mx-auto mb-3" />
-            <p className="text-zinc-500 text-sm">正在分析爆款骨架，改写到 {targetIndustry} 行业...</p>
+          <div className="text-center py-16">
+            <div className="w-16 h-16 rounded-2xl bg-violet-100 flex items-center justify-center mx-auto mb-4 animate-bounce">
+              <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-1">AI 正在改写中...</h3>
+            <p className="text-sm text-gray-500">分析爆款骨架 → 保留情绪节奏 → 替换行业内容</p>
           </div>
         )}
 
-        {/* Results */}
         {results.length > 0 && (
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              <h2 className="text-sm font-medium text-zinc-300">改写结果</h2>
-              <span className="text-[10px] text-zinc-600">{sourceIndustry} → {targetIndustry} · {results.length} 个版本</span>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-extrabold text-gray-900">改写结果</h2>
+                <p className="text-sm text-gray-500 mt-0.5">
+                  从 <span className="font-semibold text-amber-600">{sourceIndustry}</span> 改写为 <span className="font-semibold text-violet-600">{targetIndustry}</span> · {results.length} 个版本
+                </p>
+              </div>
+              <button onClick={handleExportMd}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm">
+                <Download className="w-4 h-4" /> 导出全部 MD
+              </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {results.map((r, i) => (
-                <div key={i} className="group p-4 rounded-xl bg-zinc-900/30 border border-zinc-800 hover:border-zinc-700 transition-all duration-200">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-bold text-violet-400">版本 {r.version}</span>
-                    <div className="flex gap-1">
-                      <button onClick={() => handleCopy(r.content, i)}
-                        className="flex items-center gap-1 px-2 py-1 rounded text-[10px] text-zinc-500 hover:text-zinc-300 transition-colors">
-                        {copiedIdx === i ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                        {copiedIdx === i ? "已复制" : "复制"}
-                      </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {results.map((r, i) => {
+                const g = GRADIENTS[i % GRADIENTS.length]
+                const cg = CARD_GRADIENTS[i % CARD_GRADIENTS.length]
+                return (
+                  <div key={i} className={`group rounded-2xl border ${cg} p-6 hover:shadow-lg transition-all duration-300`}>
+                    {/* Card header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${g} flex items-center justify-center shadow-md`}>
+                          <span className="text-white text-xs font-bold">{r.version}</span>
+                        </div>
+                        <span className="text-sm font-bold text-gray-900">版本 {r.version}</span>
+                        {r.version === 1 && (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium">最佳匹配</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => handleCopy(r.content, i)}
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all">
+                          {copiedIdx === i ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                          {copiedIdx === i ? "已复制" : "复制"}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed mb-5">{r.content}</div>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200/60">
+                      {r.preserved.map((p, j) => (
+                        <span key={j} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-[11px] font-medium border border-amber-200/50">
+                          <span className="w-1 h-1 rounded-full bg-amber-400" /> {p}
+                        </span>
+                      ))}
+                      {r.adapted.map((a, j) => (
+                        <span key={j} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-violet-50 text-violet-700 text-[11px] font-medium border border-violet-200/50">
+                          <span className="w-1 h-1 rounded-full bg-violet-400" /> {a}
+                        </span>
+                      ))}
                     </div>
                   </div>
-
-                  <div className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed mb-3">{r.content}</div>
-
-                  <div className="flex flex-wrap gap-1.5">
-                    {r.preserved.map((p, j) => (
-                      <span key={j} className="px-2 py-0.5 rounded-md bg-amber-500/5 text-amber-400 text-[10px] border border-amber-500/10">保留：{p}</span>
-                    ))}
-                    {r.adapted.map((a, j) => (
-                      <span key={j} className="px-2 py-0.5 rounded-md bg-violet-500/5 text-violet-400 text-[10px] border border-violet-500/10">改写：{a}</span>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
 
-            {/* Bottom actions */}
-            <div className="flex gap-3 mt-6 justify-center">
+            {/* Bottom bar */}
+            <div className="flex justify-center gap-4 mt-8 pb-8">
               <button onClick={handleRewrite} disabled={loading}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-sm text-zinc-400 hover:text-zinc-200 transition-colors">
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm">
                 <RotateCcw className="w-4 h-4" /> 重新改写
               </button>
-              <button onClick={handleExportMd}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-sm text-white transition-colors">
-                <Download className="w-4 h-4" /> 导出全部 Markdown
+              <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all shadow-sm">
+                ↑ 回到顶部
               </button>
             </div>
           </div>
         )}
       </main>
+
+      {/* Footer */}
+      <footer className="text-center py-8 text-xs text-gray-400 border-t border-gray-100">
+        Built for content creators who find viral posts and want to adapt them to their niche.
+      </footer>
     </div>
   )
 }
